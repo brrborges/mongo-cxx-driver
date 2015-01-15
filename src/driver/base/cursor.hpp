@@ -35,7 +35,14 @@ class LIBMONGOCXX_EXPORT cursor {
 
     ~cursor();
 
+    /// A cursor::iterator which points to the begining of the results.
+    ///
+    /// @return the cursor::iterator
     iterator begin();
+
+    /// A cursor::iterator which points to the end of the results.
+    ///
+    /// @return the cursor::iterator
     iterator end();
 
    private:

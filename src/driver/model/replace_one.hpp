@@ -23,6 +23,7 @@ namespace mongo {
 namespace driver {
 namespace model {
 
+/// Class representing the required arguments to a MongoDB replace one operation
 class LIBMONGOCXX_EXPORT replace_one {
 
    public:

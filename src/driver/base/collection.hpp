@@ -62,17 +62,42 @@ class LIBMONGOCXX_EXPORT collection {
 
     ~collection();
 
+    /// Runs an aggregation framework pipeline.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/aggregate/
+    ///
+    /// @param pipeline the pipeline of aggregation operations to perform
+    /// @param options optional arguments, see mongo::driver::options::aggregate
+    /// @return a mongo::driver::cursor with the results
     cursor aggregate(
         const pipeline& pipeline,
         const options::aggregate& options = options::aggregate()
     );
 
+    /// Sends a container of writes to the server to be executed as a single operation.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/bulk-write-operations/
+    ///
+    /// @param requests a container of mongo::driver::model::writes
+    /// @param options optional arguments, see mongo::driver::options::bulk_write
+    /// @return the optional result of the bulk operation execution, mongo::driver::result::bulk_write
+    /// @throws bulk_write_exception
     template<class Container>
     inline optional<result::bulk_write> bulk_write(
         const Container& requests,
         const options::bulk_write& options = options::bulk_write()
     );
 
+
+    /// Sends writes starting at begin and ending at end to the server as a batch operation.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/bulk-write-operations/
+    ///
+    /// @param begin iterator pointing to the first write to send
+    /// @param end iterator pointing to the end of the writes
+    /// @param options optional arguments, see mongo::driver::options::bulk_write
+    /// @return the optional result of the bulk operation execution
+    /// @throws bulk_write_exception
     template<class WriteModelIterator>
     inline optional<result::bulk_write> bulk_write(
         WriteModelIterator begin,
@@ -80,77 +105,193 @@ class LIBMONGOCXX_EXPORT collection {
         const options::bulk_write& options = options::bulk_write()
     );
 
+    /// Sends a batch of writes represented by the bulk_write to the server.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/bulk-write-operations/
+    ///
+    /// @param bulk_write the bulk writes
+    /// @return the optional result of the bulk operation execution
+    /// @throws bulk_write_exception
     optional<result::bulk_write> bulk_write(
         const class bulk_write& bulk_write
     );
 
+    /// Gets the number of documents matching the filter.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/count/
+    ///
+    /// @param filter the filter that documents must match in order to be counted
+    /// @param options optional arguments, see mongo::driver::options::count
+    /// @return the count of the documents that matched the filter
     std::int64_t count(
         bson::document::view filter,
         const options::count& options = options::count()
     );
 
+    /// Creates an index.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.collection.createIndex/
+    /// @see http://docs.mongodb.org/manual/reference/method/db.collection.ensureIndex/#ensureindex-options
+    ///
+    /// @param keys the keys for the index: {a: 1, b: -1}
+    /// @param options optional arguments to index creation command, see ensure-index options link
     bson::document::value create_index(
         bson::document::view keys,
         bson::document::view options
     );
 
+    /// Deletes a single matching document.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/delete/
+    ///
+    /// @param filter the first document matching this filter will be deleted
+    /// @param options optional arguments, see mongo::driver::options::delete_options
+    /// @return the result of performing the deletion
+    /// @throws write_exception
     optional<result::delete_result> delete_one(
         bson::document::view filter,
         const options::delete_options& options = options::delete_options()
     );
 
+    /// Deletes all matching documents.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/delete/
+    ///
+    /// @param filter the documents matching this filter will be deleted
+    /// @param options optional arguments, see mongo::driver::options::delete_options
+    /// @return the result of performing the deletion
+    /// @throws write_exception
     optional<result::delete_result> delete_many(
         bson::document::view filter,
         const options::delete_options& options = options::delete_options()
     );
 
+    /// Finds the distinct values for a specified field accross a single collection.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/distinct/
+    ///
+    /// @param field_name the field for which the distinct values will be found
+    /// @param filter a filter for documents to be applied before searching for distinct values
+    /// @param options optional arguments, see mongo::driver::options::distinct
+    /// @return cursor having the distinct values for the specified field in the matching documents
     cursor distinct(
         const std::string& field_name,
         bson::document::view filter,
         const options::distinct& options = options::distinct()
     );
 
+    /// Drops this collection.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.collection.drop/
     void drop();
 
+    /// Finds the documents matching the filter.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-operations-introduction/
+    ///
+    /// @param filter the filter
+    /// @param options optional arguments, see mongo::driver::options::find
+    /// @return cursor with the matching documents from the collection
     cursor find(
         bson::document::view filter,
         const options::find& options = options::find()
     );
 
+
+    /// Finds a single document matching the filter.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-operations-introduction/
+    ///
+    /// @param filter the filter
+    /// @param options optional arguments, see mongo::driver::options::find
+    /// @return an optional document that matched the filter
     optional<bson::document::value> find_one(
         bson::document::view filter,
         const options::find& options = options::find()
     );
 
+    /// Finds a single document and deletes it, returning the original.
+    ///
+    /// @param filter the filter
+    /// @param options optional arguments, see mongo::driver::options::find_one_and_delete
+    /// @return the document that was deleted
+    /// @throws write_exception
     optional<bson::document::value> find_one_and_delete(
         bson::document::view filter,
         const options::find_one_and_delete& options = options::find_one_and_delete()
     );
 
-    optional<bson::document::value> find_one_and_update(
-        bson::document::view filter,
-        bson::document::view update,
-        const options::find_one_and_update& options = options::find_one_and_update()
-    );
-
+    /// Finds a single document and replaces it, returning either the original or the replaced
+    /// document.
+    ///
+    /// @param filter the filter
+    /// @param replacement the replacement
+    /// @param options optional arguments, see mongo::driver::options::find_one_and_replace
+    /// @return the original or replaced document
+    /// @throws write_exception
     optional<bson::document::value> find_one_and_replace(
         bson::document::view filter,
         bson::document::view replacement,
         const options::find_one_and_replace& options = options::find_one_and_replace()
     );
 
+    /// Finds a single document and updates it, returning either the original or the updated
+    /// document.
+    ///
+    /// @param filter the filter
+    /// @param update the update
+    /// @param options optional arguments, see mongo::driver::options::find_one_and_update
+    /// @return the original or updated document
+    /// @throws write_exception
+    optional<bson::document::value> find_one_and_update(
+        bson::document::view filter,
+        bson::document::view update,
+        const options::find_one_and_update& options = options::find_one_and_update()
+    );
+
+    /// Inserts a single document into the collection. If the document is missing an identifier
+    /// one will be generated for it.
+    ///
+    /// @param document the document to insert
+    /// @param options optional arguments, see mongo::driver::options::insert
+    /// @return the result of attempting to perform the insert
+    /// @throws write_exception
     optional<result::insert_one> insert_one(
         bson::document::view document,
         const options::insert& options = options::insert()
     );
 
+    /// Inserts many documents into the collection. If any of the documents are missing identifiers
+    /// the driver will generate them.
+    ///
+    /// @warning This method uses the bulk insert command to execute the insertion as opposed to
+    /// the legacy OP_INSERT wire protocol message. As a result, using this method to insert many
+    /// documents on MongoDB < 2.6 will be slow.
+    ///
+    /// @param container containing documents to insert
+    /// @param options optional arguments, see mongo::driver::options::insert
+    /// @return the result of attempting to performing the insert
+    /// @throws write_exception
     template<class Container>
     inline optional<result::insert_many> insert_many(
         const Container& container,
         const options::insert& options = options::insert()
     );
 
-    // TODO: document DocumentViewIterator concept or static assert
+    /// Inserts many documents into the collection. If any of the documents are missing identifiers
+    /// the driver will generate them.
+    ///
+    /// @warning This method uses the bulk insert command to execute the insertion as opposed to
+    /// the legacy OP_INSERT wire protocol message. As a result, using this method to insert many
+    /// documents on MongoDB < 2.6 will be slow.
+    ///
+    /// @param begin iterator pointing to the first document to be inserted
+    /// @param end iterator pointing to the end of the documents to be inserted
+    /// @param options optional arguments, see mongo::driver::options::insert
+    /// @return the result of attempting to performing the insert
+    /// @throws write_exception
+    ///
+    /// TODO: document DocumentViewIterator concept or static assert
     template<class DocumentViewIterator>
     inline optional<result::insert_many> insert_many(
         DocumentViewIterator begin,
@@ -158,32 +299,85 @@ class LIBMONGOCXX_EXPORT collection {
         const options::insert& options = options::insert()
     );
 
+    /// Produces a list of indexes currently on this collection.
+    ///
+    /// @return cursor yielding the index specifications
     cursor list_indexes() const;
 
+    /// The name of this collection.
+    ///
+    /// @return the name of the collection
     const std::string& name() const;
 
+    /// Sets the read_preference for the collection. Changes will not have any effect on existing
+    /// cursors or other read operations which use the read preference.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-preference/
+    ///
+    /// @param rp the read_preference to set
     void read_preference(class read_preference rp);
+
+    /// Gets the read_preference for the collection.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-preference/
+    ///
+    /// @return the current read_preference
     class read_preference read_preference() const;
 
+    /// Replaces a single document.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/update/
+    ///
+    /// @param filter document representing the document to be replaced
+    /// @param replacement the replacement document
+    /// @param options optional arguments, see mongo::driver::options::update
+    /// @return the result of attempting to replace a document
+    /// @throws write_exception
     optional<result::replace_one> replace_one(
         bson::document::view filter,
         bson::document::view replacement,
         const options::update& options = options::update()
     );
 
+    /// Updates a single document.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/update/
+    ///
+    /// @param filter document representing the document to be updated
+    /// @param update document representing the update to be applied
+    /// @param options optional arguments, see mongo::driver::options::update
+    /// @return the result of attempting to update a document
+    /// @throws write_exception
     optional<result::update> update_one(
         bson::document::view filter,
         bson::document::view update,
         const options::update& options = options::update()
     );
 
+    /// Updates multiple documents.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/command/update/
+    ///
+    /// @param filter document representing the documents to be updated
+    /// @param update document representing the update to be applied
+    /// @param options optional arguments, see mongo::driver::options::update
+    /// @return the result of attempting to update multiple documents
+    /// @throws write_exception
     optional<result::update> update_many(
         bson::document::view filter,
         bson::document::view update,
         const options::update& options = options::update()
     );
 
+    /// Sets the write_concern for the collection. Changes will not have any effect on existing
+    /// write operations.
+    ///
+    /// @param wc the write_concern to set
     void write_concern(class write_concern wc);
+
+    /// Gets the write_concern for the collection.
+    ///
+    /// @return the current write_concern
     class write_concern write_concern() const;
 
    private:

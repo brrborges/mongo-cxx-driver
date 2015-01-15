@@ -21,9 +21,13 @@
 namespace mongo {
 namespace driver {
 
+/// An instance of the MongoDB C++ driver.
+///
+/// Life cycle: An instance of the driver *MUST* be kept around.
 class instance {
 
    public:
+    /// Creates an instance of the MongoDB C++ driver.
     instance();
 
     instance(instance&& other) noexcept;

@@ -25,9 +25,16 @@ namespace driver {
 
 class collection;
 
+/// A bulk_write represents a batch of writes to be sent to the server at the same time.
 class LIBMONGOCXX_EXPORT bulk_write {
 
    public:
+    /// Initialize a new Bulk Operation to be executed against a mongo::driver::collection.
+    //
+    /// @param ordered If true all operations will be executed serially in the order provided.
+    /// and the entire bulk operation will abort on the first error. If false operations will be
+    /// executed in arbitrary order (possibly in parallel on the server) and any errors will be
+    /// reported after attempting all operations.
     explicit bulk_write(bool ordered);
 
     bulk_write(bulk_write&& other) noexcept;

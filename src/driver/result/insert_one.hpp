@@ -23,6 +23,7 @@ namespace mongo {
 namespace driver {
 namespace result {
 
+/// Class representing the result of a MongoDB insert operation
 class LIBMONGOCXX_EXPORT insert_one {
 
    public:

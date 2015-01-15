@@ -26,10 +26,20 @@ namespace driver {
 namespace options {
 
 // NOTE: client options interface still evolving
+
+/// Class representing the optional arguments to a MongoDB driver client
 class LIBMONGOCXX_EXPORT client {
 
    public:
+
+    /// Sets the SSL related options.
+    ///
+    /// @param ssl_opts the SSL related options
     void ssl_opts(ssl ssl_opts);
+
+    /// The current SSL related options
+    ///
+    /// @return the SSL related options
     const optional<ssl>& ssl_opts() const;
 
    private:

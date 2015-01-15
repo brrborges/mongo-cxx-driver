@@ -26,16 +26,53 @@ namespace mongo {
 namespace driver {
 namespace options {
 
+/// Class representing the optional arguments to a MongoDB find_and_modify delete operation
 class LIBMONGOCXX_EXPORT find_one_and_delete {
 
    public:
+    /// Sets the maximum amount of time for this operation to run (server side) in milliseconds.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/operator/meta/maxTimeMS
+    ///
+    /// @param max_time_ms the max amount of time (in milliseconds)
     void max_time_ms(std::int64_t max_time_ms);
+
+    /// The current max_time_ms setting.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/operator/meta/maxTimeMS
+    ///
+    /// @return the current max time (in milliseconds)
     const optional<std::int64_t>& max_time_ms() const;
 
+    /// Sets a projection which limits the fields to return.
+    ///
+    /// @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
+    ///
+    /// @param projection the projection document
     void projection(bson::document::view projection);
+
+    /// Gets the current projection.
+    ///
+    /// @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
+    ///
+    /// @return the current projection
     const optional<bson::document::view>& projection() const;
 
+    /// Sets the order to search for a matching document.
+    ///
+    /// @warning This can influence which document the operation modifies if the provided filter
+    /// selects multiple documents.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.collection.findAndModify/
+    ///
+    /// @param ordering document describing the order of the documents to be returned
     void sort(bson::document::view ordering);
+
+    /// Gets the current sort ordering.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.collection.findAndModify/
+    ///
+    /// @return the current sort ordering
     const optional<bson::document::view>& sort() const;
 
    private:

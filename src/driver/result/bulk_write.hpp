@@ -25,6 +25,7 @@ namespace mongo {
 namespace driver {
 namespace result {
 
+/// Class representing the result of a MongoDB bulk write operation
 class LIBMONGOCXX_EXPORT bulk_write {
 
    public:

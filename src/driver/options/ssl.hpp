@@ -24,6 +24,7 @@ namespace mongo {
 namespace driver {
 namespace options {
 
+/// Class representing the optional arguments to a MongoDB driver client (SSL)
 class LIBMONGOCXX_EXPORT ssl {
 
    public:

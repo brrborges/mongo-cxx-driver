@@ -22,6 +22,7 @@ namespace mongo {
 namespace driver {
 namespace model {
 
+/// Class representing the required arguments to a MongoDB delete many operation
 class LIBMONGOCXX_EXPORT delete_many {
 
    public:

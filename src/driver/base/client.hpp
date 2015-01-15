@@ -29,12 +29,20 @@ namespace driver {
 
 /// The client class is the entry point into the MongoDB driver. It acts as a logical gateway for
 /// accessing the databases of MongoDB clusters. Databases that are accessed via a client inherit
-/// all of the options specified on the client.
+/// all of the options specified on the client via a copy upon instantiation. The client MUST be
+/// kept around during the lifetime of all subordinate objects (collections, databases, cursors...)
 class LIBMONGOCXX_EXPORT client {
 
     // TODO: iterable for databases on the server
     // TODO: add + implement client api methods
    public:
+    /// Create a new connection to MongoDB. An instance of this class must remain while
+    /// subobjects like database and collections are in use. It is the responsability of the
+    /// driver user to keep the client around for the lifetime of the connections and while the
+    /// various subojects are in use.
+    ///
+    /// @param mongodb_uri a MongoDB URI representing the connection parameters
+    /// @param options additional options that cannot be specefied via the mongodb_uri
     client(
         const uri& mongodb_uri = uri(),
         const options::client& options = options::client()
@@ -45,17 +53,50 @@ class LIBMONGOCXX_EXPORT client {
 
     ~client();
 
-    // TODO: document that modifications at this level do not affect existing clients + databases
+    /// Sets the read_preference for this client.
+    ///
+    /// @note Modifications at this level do not effect existing databases or collection instances
+    /// that have come from this client but do effect new ones as databases will receive a copy of
+    /// the read_preference of this client upon instantiation.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-preference/
+    ///
+    /// @param rp the new read_preference
     void read_preference(class read_preference rp);
+
+    /// The current read preference for this client.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-preference/
+    ///
+    /// @return the current read_preference
     class read_preference read_preference() const;
 
-    // TODO: document that modifications at this level do not affect existing clients + databases
+    /// Sets the write_concern for this client.
+    ///
+    /// @note Modifications at this level do not effect existing databases or collection instances
+    /// that have come from this client but do effect new ones as databases will receive a copy of
+    /// the write_concern of this client upon instantiation.
+    ///
+    /// @param wc the new write concern
     void write_concern(class write_concern wc);
+
+    /// The current write_concern for this client.
+    ///
+    /// @return the current write_concern
     class write_concern write_concern() const;
 
+    /// Access to a particular database (logical grouping of collections)
+    ///
+    /// @param name the name of the database to get
+    /// @return the database
     class database database(const std::string& name) const &;
     class database database(const std::string& name) const && = delete;
 
+
+    /// Syntactic sugar for accessing a database.
+    ///
+    /// @param name the name of the database to get
+    /// @return the database
     inline class database operator[](const std::string& name) const &;
     inline class database operator[](const std::string& name) const && = delete;
 

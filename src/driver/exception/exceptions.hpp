@@ -19,17 +19,6 @@
 
 #include "bson/document.hpp"
 
-/// MongoDB C++ Driver exception hierarchy
-///
-/// std::exception
-///     L mongo::driver::exception
-///         L mongo::driver::operation_exception
-///             L mongo::driver::query_exception
-///             L mongo::driver::write_exception
-///                 L mongo::driver::duplicate_key_exception
-///         L mongo::driver::socket_exception
-///
-
 namespace mongo {
 namespace driver {
 
@@ -41,7 +30,7 @@ class LIBMONGOCXX_EXPORT query_exception : public operation_exception {};
 
 class LIBMONGOCXX_EXPORT write_exception : public operation_exception {};
 
-class LIBMONGOCXX_EXPORT duplicate_key_exception : public write_exception {};
+class LIBMONGOCXX_EXPORT bulk_write_exception : public write_exception {};
 
 class write_concern_error {
   private:

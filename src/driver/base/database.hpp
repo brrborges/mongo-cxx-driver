@@ -43,21 +43,43 @@ class LIBMONGOCXX_EXPORT database {
 
     ~database();
 
+    /// Runs a command against this database.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.runCommand/
+    ///
+    /// @param command document representing the command to be run
+    /// @return the result of executing the command
+    /// @throws operation_exception
     bson::document::value command(bson::document::view command);
 
+    /// Explicitly creates a collection with specified options.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.createCollection/
+    ///
+    /// @param name the new collection's name
+    /// @param options the options for the new collection
     class collection create_collection(const std::string& name, bson::document::view options);
 
+    /// Drops the database.
+    ///
+    /// @see http://docs.mongodb.org/manual/reference/method/db.dropDatabase/
     void drop();
 
+    /// Checks whether this database contains a collection having name.
+    ///
+    /// @param name the name of the collection
+    /// @return bool whether the collection exists in this database
     bool has_collection(const std::string& name);
 
+    /// Enumerates the collections of this database.
+    ///
+    /// @return mongo::driver::cursor containing the collection information
     cursor list_collections();
 
+    /// Get the name of this database.
+    ///
+    /// @return the name of this database.
     const std::string& name() const;
-
-    // TODO: move this next to write concern
-    void read_preference(class read_preference rp);
-    class read_preference read_preference() const;
 
     // TODO: should this be called move?
     void rename(
@@ -67,10 +89,46 @@ class LIBMONGOCXX_EXPORT database {
 
     bson::document::value stats();
 
+    /// Sets the read_preference for this database.
+    ///
+    /// @note Modifications at this level do not effect existing collection instances that have come
+    /// from this database but do effect new ones as new collections will receive a copy of the
+    /// read_preference of this database upon instantiation.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-preference/
+    ///
+    /// @param rp the new read_preference
+    void read_preference(class read_preference rp);
+
+    /// The current read preference for this database.
+    ///
+    /// @see http://docs.mongodb.org/manual/core/read-preference/
+    ///
+    /// @return the current read_preference
+    class read_preference read_preference() const;
+
+    /// Sets the write_concern for this database.
+    ///
+    /// @note Modifications at this level do not effect existing collection instances that have come
+    /// from this database but do effect new ones as new collections will receive a copy of the
+    /// write_concern of this client upon instantiation.
     void write_concern(class write_concern wc);
+
+    /// The current write_concern for this database.
+    ///
+    /// @return the current write_concern
     class write_concern write_concern() const;
 
+    /// Access a collection (logical grouping of documents)
+    ///
+    /// @param name the name of the collection to get
+    /// @return the collection
     class collection collection(const std::string& name) const;
+
+    /// Syntactic sugar for accessing a collection.
+    ///
+    /// @param name the name of the collection to get
+    /// @return the collection
     inline class collection operator[](const std::string& name) const;
 
    private:

@@ -22,6 +22,7 @@ namespace mongo {
 namespace driver {
 namespace model {
 
+/// Class representing the required arguments to a MongoDB insert operation
 class LIBMONGOCXX_EXPORT insert_one {
 
    public:

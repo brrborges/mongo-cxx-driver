@@ -26,6 +26,7 @@ namespace mongo {
 namespace driver {
 namespace result {
 
+/// Class representing the result of a MongoDB replace operation
 class LIBMONGOCXX_EXPORT replace_one {
 
    public:

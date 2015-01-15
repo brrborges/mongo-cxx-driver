@@ -22,10 +22,11 @@ namespace mongo {
 namespace driver {
 namespace model {
 
+/// Class representing the required arguments to a MongoDB delete one operation
 class LIBMONGOCXX_EXPORT delete_one {
 
    public:
-    delete_one(bson::document::view filter);
+    explicit delete_one(bson::document::view filter);
 
     const bson::document::view& filter() const;
 
